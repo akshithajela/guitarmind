@@ -1,0 +1,19 @@
+MUSICAL MODES AND THEIR MOODS
+
+A mode is a type of scale with a distinct pattern of intervals and a characteristic mood. The seven modes are derived from the major scale by starting on different notes. Each mode has its own emotional flavor.
+
+Ionian is the standard major scale. It sounds bright, happy, and stable.
+
+Dorian is a minor mode with a raised sixth note. It sounds minor but slightly brighter and more hopeful than natural minor, often described as jazzy, soulful, or cool. Common in folk, rock, and jazz.
+
+Phrygian is a minor mode with a lowered second note. It sounds dark, exotic, tense, and is often associated with Spanish flamenco and metal music.
+
+Lydian is a major mode with a raised fourth note. It sounds dreamy, floating, magical, or cinematic. Often used in film scores.
+
+Mixolydian is a major mode with a lowered seventh note. It sounds bluesy, rootsy, and slightly unresolved. Common in rock, blues, and folk.
+
+Aeolian is the natural minor scale. It sounds sad, melancholic, and serious.
+
+Locrian is a rare, unstable mode with a diminished tonic chord. It sounds tense, dissonant, and unresolved, and is seldom used as a tonal center.
+
+Choosing a mode instead of a plain major or minor scale is a way to give a progression a specific, distinctive emotional color.

@@ -1,0 +1,9 @@
+MAJOR AND MINOR SCALES
+
+A major scale is built using a fixed pattern of whole steps (W) and half steps (H): W-W-H-W-W-W-H. For example, the C major scale is C-D-E-F-G-A-B-C, using only the white keys on a piano. Major scales sound bright, happy, stable, and resolved. Most upbeat and cheerful music is built on major scales.
+
+A natural minor scale uses the pattern W-H-W-W-H-W-W. For example, the A minor scale is A-B-C-D-E-F-G-A. Minor scales sound darker, sadder, more serious, or more introspective than major scales. Melancholic, tense, or emotional music often uses minor scales.
+
+Every major scale has a relative minor scale that shares the exact same notes but starts on a different note (the sixth degree of the major scale). For example, C major and A minor contain the same notes. This relationship is important for understanding keys and chord choices.
+
+The harmonic minor scale raises the seventh note of the natural minor by a half step, creating a stronger, more dramatic pull back to the root. The melodic minor scale raises both the sixth and seventh notes when ascending. These variations add tension and color, often used in classical and cinematic music.

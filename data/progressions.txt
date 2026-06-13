@@ -1,0 +1,15 @@
+CHORD PROGRESSIONS AND THEIR EMOTIONAL CHARACTER
+
+A chord progression is a sequence of chords played in order. Progressions are the harmonic backbone of a song and largely determine its emotional feel. Chords are referred to by Roman numerals based on their position in the key: in a major key, the chords are I, ii, iii, IV, V, vi, and vii diminished. Uppercase numerals are major chords; lowercase are minor.
+
+The I-V-vi-IV progression (for example, in C major: C-G-Am-F) is one of the most popular progressions in pop music. It feels uplifting, emotional, and anthemic. Countless hit songs use it.
+
+The vi-IV-I-V progression (Am-F-C-G in C major) has a similar set of chords but starts on the minor vi chord, giving it a more bittersweet, emotional, or hopeful-but-sad quality.
+
+The ii-V-I progression (Dm-G-C in C major) is the foundation of jazz harmony. It creates a strong sense of resolution and forward motion as it returns home to the I chord.
+
+The 12-bar blues progression uses primarily the I, IV, and V chords in a repeating 12-bar pattern. It is the basis of blues, early rock and roll, and much of rock music. It feels grounded, soulful, and rhythmic.
+
+Minor key progressions, such as i-VI-III-VII (Am-F-C-G in A minor), feel darker, more cinematic, or more dramatic. The minor i chord establishes a serious or melancholic mood.
+
+A key technique is the use of the V chord (the dominant), which creates tension that wants to resolve back to the I chord (the tonic). Delaying or avoiding this resolution can create a feeling of suspension, longing, or unease.
