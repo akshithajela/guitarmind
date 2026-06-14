@@ -35,7 +35,14 @@ _embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
     model_name="all-MiniLM-L6-v2"
 )
 _chroma = chromadb.PersistentClient(path=str(_db_dir))
-_theory = _chroma.get_collection("music_theory", embedding_function=_embed_fn)
+# If the knowledge base hasn't been built yet (e.g. on a fresh server),
+# build it automatically before we try to use it.
+try:
+    _theory = _chroma.get_collection("music_theory", embedding_function=_embed_fn)
+except Exception:
+    import build_knowledge
+    build_knowledge.main()
+    _theory = _chroma.get_collection("music_theory", embedding_function=_embed_fn)
 
 
 def retrieve_theory(query: str, n: int = 3) -> str:
