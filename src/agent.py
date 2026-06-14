@@ -1,55 +1,67 @@
 """
 GuitarMind — agent.py
-The core agent. It loads your API key, sends the user's request plus the
-system prompt to Claude, and parses back a structured JSON progression.
-
-Run:  python src/agent.py
-Then type a mood/genre/skill request and press Enter. Type 'quit' to exit.
+The core agent. Loads the API key, retrieves relevant music theory from the
+local data files (simple keyword retrieval — no heavy vector DB needed for a
+small knowledge base), sends the request + system prompt to Claude, and parses
+back a structured JSON progression.
 """
 
 import os
 import sys
 import json
+import pathlib
+import re
 
 from dotenv import load_dotenv
 import anthropic
 
-import pathlib
-_here = pathlib.Path(__file__).resolve().parent
-_prompts_code = (_here / "gm_prompts.py").read_text()
-exec(_prompts_code)
+# Make sure we can import gm_prompts whether run directly or imported by app.py
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from gm_prompts import SYSTEM_PROMPT
 
-# Load the API key (same secure pattern as Week 1).
+# Load the API key. Works both locally (.env) and on Streamlit (env var / secrets).
 load_dotenv()
 api_key = os.getenv("ANTHROPIC_API_KEY")
 if not api_key:
-    sys.exit("ERROR: ANTHROPIC_API_KEY not found. Check your .env file.")
+    sys.exit("ERROR: ANTHROPIC_API_KEY not found. Check your .env file or secrets.")
 
 client = anthropic.Anthropic(api_key=api_key)
-# --- Knowledge base retrieval (RAG) ---
-import chromadb
-from chromadb.utils import embedding_functions
 
-_db_dir = pathlib.Path(__file__).resolve().parent.parent / "chroma_db"
-_embed_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"
-)
-_chroma = chromadb.PersistentClient(path=str(_db_dir))
-# If the knowledge base hasn't been built yet (e.g. on a fresh server),
-# build it automatically before we try to use it.
-try:
-    _theory = _chroma.get_collection("music_theory", embedding_function=_embed_fn)
-except Exception:
-    import build_knowledge
-    build_knowledge.main()
-    _theory = _chroma.get_collection("music_theory", embedding_function=_embed_fn)
+# --- Knowledge base retrieval (simple keyword scoring over data/*.txt) ---
+_DATA_DIR = pathlib.Path(__file__).resolve().parent.parent / "data"
+
+
+def _load_chunks() -> list[str]:
+    """Read every .txt file in data/ and split into paragraph-sized chunks."""
+    chunks = []
+    if not _DATA_DIR.exists():
+        return chunks
+    for txt_file in sorted(_DATA_DIR.glob("*.txt")):
+        text = txt_file.read_text(encoding="utf-8")
+        for para in text.split("\n\n"):
+            para = para.strip()
+            if para:
+                chunks.append(para)
+    return chunks
+
+
+_CHUNKS = _load_chunks()
 
 
 def retrieve_theory(query: str, n: int = 3) -> str:
-    """Find the most relevant theory chunks for the user's request."""
-    results = _theory.query(query_texts=[query], n_results=n)
-    chunks = results["documents"][0]
-    return "\n\n".join(chunks)
+    """Return the n chunks that share the most words with the query."""
+    if not _CHUNKS:
+        return ""
+    query_words = set(re.findall(r"[a-z]+", query.lower()))
+    scored = []
+    for chunk in _CHUNKS:
+        chunk_words = set(re.findall(r"[a-z]+", chunk.lower()))
+        overlap = len(query_words & chunk_words)
+        scored.append((overlap, chunk))
+    scored.sort(key=lambda pair: pair[0], reverse=True)
+    top = [chunk for score, chunk in scored[:n] if score > 0]
+    return "\n\n".join(top)
+
 
 def get_progression(user_request: str) -> dict:
     """Send one request to GuitarMind and return the parsed JSON result."""
@@ -76,7 +88,6 @@ def get_progression(user_request: str) -> dict:
     try:
         return json.loads(raw_text)
     except json.JSONDecodeError:
-        # If parsing fails, surface the raw text so we can see what happened.
         return {"_parse_error": True, "raw": raw_text}
 
 
@@ -109,11 +120,10 @@ if __name__ == "__main__":
     while True:
         user_request = input("You: ").strip()
         if user_request.lower() in {"quit", "exit", "q"}:
-            print("Keep playing. 🎸")
+            print("Keep playing.")
             break
         if not user_request:
             continue
         print("\nThinking...")
         result = get_progression(user_request)
         show(result)
-        
