@@ -33,7 +33,7 @@ GuitarMind is an AI agent with five core parts:
 2. **System prompt** — a fixed instruction set that defines GuitarMind's personality, rules, and the exact output format. It's sent with every request so behavior stays consistent.
 3. **Structured output** — the agent returns a single JSON object (key, chords, reasoning, etc.) rather than free text, so the data is reliable and easy for a UI to render.
 4. **RAG knowledge base** — a small, curated set of music-theory notes (scales, chord progressions, modes). Before answering, the agent retrieves the most relevant notes and grounds its response in them, rather than relying purely on the model's memory.
-5. **Retrieval pipeline** — the theory notes are converted into embeddings (numerical representations of meaning) and stored in a local ChromaDB vector database. A user's request is matched against these to pull the most relevant chunks.
+5. **Retrieval pipeline** — before answering, the agent searches the curated theory notes for the most relevant chunks (keyword-based scoring) and feeds them to the model, so answers stay grounded in the curated sources.
 ## Key design decisions
 
 **Right-sized the retrieval layer.** I initially built the knowledge base on ChromaDB, a vector database with semantic embeddings. During deployment I hit repeated dependency conflicts, and stepping back I realized a full vector DB was overkill for a knowledge base of ~31 short, keyword-rich theory chunks. I replaced it with lightweight keyword-based retrieval in plain Python. This kept the same behavior (answers grounded in the curated theory files), removed three heavy dependencies, and made the app deploy reliably. Semantic embedding search is noted as a future enhancement for when the knowledge base grows.
@@ -124,13 +124,10 @@ guitarmind/
 # 1. set up environment
 python3 -m venv venv
 source venv/bin/activate
-pip install anthropic python-dotenv chromadb sentence-transformers
+pip install anthropic python-dotenv streamlit
 
 # 2. add your Anthropic API key
 cp .env.example .env        # then paste your key into .env
-
-# 3. build the knowledge base (run once)
-python src/build_knowledge.py
 
 # 4. run the agent
 python src/agent.py
