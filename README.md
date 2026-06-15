@@ -34,6 +34,19 @@ GuitarMind is an AI agent with five core parts:
 3. **Structured output** — the agent returns a single JSON object (key, chords, reasoning, etc.) rather than free text, so the data is reliable and easy for a UI to render.
 4. **RAG knowledge base** — a small, curated set of music-theory notes (scales, chord progressions, modes). Before answering, the agent retrieves the most relevant notes and grounds its response in them, rather than relying purely on the model's memory.
 5. **Retrieval pipeline** — the theory notes are converted into embeddings (numerical representations of meaning) and stored in a local ChromaDB vector database. A user's request is matched against these to pull the most relevant chunks.
+## Key design decisions
+
+**Right-sized the retrieval layer.** I initially built the knowledge base on ChromaDB, a vector database with semantic embeddings. During deployment I hit repeated dependency conflicts, and stepping back I realized a full vector DB was overkill for a knowledge base of ~31 short, keyword-rich theory chunks. I replaced it with lightweight keyword-based retrieval in plain Python. This kept the same behavior (answers grounded in the curated theory files), removed three heavy dependencies, and made the app deploy reliably. Semantic embedding search is noted as a future enhancement for when the knowledge base grows.
+
+**Honest scoping of the song references.** GuitarMind suggests real songs alongside each progression. I deliberately label these as songs in a *similar emotional space* rather than claiming they use the exact same chords. Verifying exact chord matches would require licensed chord data I couldn't access legally or reliably, and language models can state song chords confidently while being wrong. Rather than risk misleading users, I scoped the feature to mood-matching and surface an "explore" link per song. Progression-verified matching is a documented v2 idea.
+
+**Grounding via retrieval was a deliberate demonstration, not a crutch.** Music theory is well-represented in the base model, so retrieval adds modest accuracy here. I included it primarily to demonstrate the RAG pattern end to end and to let the system cite a curated, controllable knowledge base — an honest framing I can defend in conversation.
+
+## Deployment
+
+Live app: https://guitarmind.streamlit.app
+
+Deployed on Streamlit Community Cloud from this GitHub repo. The API key is supplied through Streamlit's encrypted secrets (never committed to the repo — `.env` is git-ignored). Getting to a clean deploy meant working through a real Python 3.14 dependency incompatibility, which ultimately drove the retrieval-layer simplification above. Note: on the free tier the app sleeps after inactivity and takes ~30 seconds to wake.
 
 ### The flow of a single request
 
@@ -131,6 +144,9 @@ python src/agent.py
 - [x] RAG knowledge base over curated music theory
 - [ ] Web UI (Streamlit) for non-technical users
 - [ ] Public deployment + demo video
+- [ ] Semantic (embedding-based) retrieval once the knowledge base grows beyond keyword matching
+- [ ] Progression-verified song matching (songs that genuinely use the displayed chords)
+- [ ] Audio playback / MIDI preview of the generated progression
 
 ---
 
